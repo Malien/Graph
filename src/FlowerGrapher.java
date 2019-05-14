@@ -5,7 +5,7 @@ public class FlowerGrapher implements IGrapher {
     public static final float RANGE_MIN = 0;
     public static final float RANGE_MAX = 360;
 
-    private int resolution = 100;
+    private int resolution = 10000;
     private ArgInfo[] args = {
             new ArgInfo(10, "R₀", -100, 100),
             new ArgInfo(40, "A", -100, 100),
@@ -18,9 +18,9 @@ public class FlowerGrapher implements IGrapher {
 
     @Override
     public String name() {
-        return  "X = \uD835\uDF0C cos(\uD835\uDF11)\n"+
-                "Y = \uD835\uDF0C sin(\uD835\uDF11)\n"+
-                "\uD835\uDF0C = R₀ + A cos(\uD835\uDF11 2\uD835\uDF0B/S)";
+        return  "<html>X = \uD835\uDF0C cos(\uD835\uDF11)<br>"+
+                "Y = \uD835\uDF0C sin(\uD835\uDF11)<br>"+
+                "\uD835\uDF0C = R₀ + A cos(\uD835\uDF11 2\uD835\uDF0B/S)</html>";
     }
 
     @Override
