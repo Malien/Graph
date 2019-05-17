@@ -131,8 +131,6 @@ public class GraphWindow {
             glfwGetWindowPos(window, winX, winY);
             glfwGetWindowSize(window, winW, winH);
 
-            float oldScale = 5;
-
             if (shiftModifier) xoff *= 10;
             scale *= 1 + xoff * 0.05;
             if (scale < 0.1) scale = 0.1f;
@@ -142,9 +140,6 @@ public class GraphWindow {
 
             float dx = mx*((float)xoff * 0.05f);
             float dy = my*((float)xoff * 0.05f);
-
-            System.out.println("old mouse: " + mx + ", "  + my + "; d mouse: " + dx + ", " + dy +
-                    "; old scale: " + oldScale + "; new scale: " + scale);
 
             translation.x += dx;
             translation.y += dy;
