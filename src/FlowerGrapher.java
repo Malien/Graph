@@ -60,19 +60,18 @@ public class FlowerGrapher implements IGrapher {
     @Override
     public Iterator<Vec2> iterator() {
         return new Iterator<Vec2>() {
-            float increment = RANGE_MAX / resolution;
-            float pos = RANGE_MIN;
+            float increment = (RANGE_MAX - RANGE_MIN) / resolution;
+            float pos = 0;
+            int _resolution = resolution;
 
             @Override
             public boolean hasNext() {
-                return pos <= RANGE_MAX;
+                return pos <= _resolution;
             }
 
             @Override
             public Vec2 next() {
-                Vec2 solution = solve(pos);
-                pos+=increment;
-                return solution;
+                return solve(RANGE_MIN + increment*pos++);
             }
         };
     }
