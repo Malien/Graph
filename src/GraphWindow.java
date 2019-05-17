@@ -1,16 +1,11 @@
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 
-import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -70,40 +65,6 @@ public class GraphWindow {
         imageCallback = callback;
     }
 
-//    private BufferedImage getImage(){
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            IntBuffer pWidth = stack.mallocInt(1);
-//            IntBuffer pHeight = stack.mallocInt(1);
-//
-//            glfwGetWindowSize(window, pWidth, pHeight);
-//
-//            int width = pWidth.get(0);
-//            int height = pHeight.get(0);
-//
-//            ByteBuffer pixels = ByteBuffer.allocateDirect(width*height*4);
-//            pixels.order(ByteOrder.nativeOrder());
-//
-//            ByteBuffer buffer = ByteBuffer.allocateDirect(width*height*4);
-//            buffer.order(ByteOrder.nativeOrder());
-//
-//            glReadPixels(0,0, width, height, GL_UNSIGNED_BYTE, GL_RGBA, buffer);
-//
-//            buffer.flip();
-//
-//            byte[] data = new byte[width*height*4];
-//            int counter = 0;
-//            while (pixels.hasRemaining()){
-//                data[counter++] = pixels.get();
-//            }
-//            System.out.println(Arrays.toString(data));
-//            System.out.println(counter);
-//
-//            BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
-////            img.setRGB(0, 0, width, height, buffer, 0, width);
-//            return img;
-//        }
-//    }
-
     private BufferedImage getImage() {
         int[] height = new int[1];
         int[] width = new int[1];
@@ -159,9 +120,44 @@ public class GraphWindow {
             }
         });
         glfwSetScrollCallback(window, (window, yoff, xoff) -> {
+            double[] mouseX = new double[1];
+            double[] mouseY = new double[1];
+            int[] winX = new int[1];
+            int[] winY = new int[1];
+            int[] winW = new int[1];
+            int[] winH = new int[1];
+
+            glfwGetCursorPos(window, mouseX, mouseY);
+            glfwGetWindowPos(window, winX, winY);
+            glfwGetWindowSize(window, winW, winH);
+
+            float oldScale = 5;
+
             if (shiftModifier) xoff *= 10;
             scale *= 1 + xoff * 0.05;
             if (scale < 0.1) scale = 0.1f;
+
+            float mx = translation.x - (float)mouseX[0];
+            float my = translation.y - (float)mouseY[0];
+
+            float dx = mx*((float)xoff * 0.05f);
+            float dy = my*((float)xoff * 0.05f);
+
+            System.out.println("old mouse: " + mx + ", "  + my + "; d mouse: " + dx + ", " + dy +
+                    "; old scale: " + oldScale + "; new scale: " + scale);
+
+            translation.x += dx;
+            translation.y += dy;
+        });
+        glfwSetWindowSizeCallback(window, (window1, width, height) -> {
+            glViewport(0,0,width,height);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+
+            glOrtho(0.0f,width,height,0,1.0f,-1.0f);
+
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
         });
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
