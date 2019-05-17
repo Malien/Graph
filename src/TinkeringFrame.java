@@ -87,7 +87,7 @@ public class TinkeringFrame extends JFrame {
         JButton saveButton = new JButton("Capture");
         saveButton.addActionListener( e -> {
             viewer.requestImage(img -> {
-                File outfile = new File("E:\\New folder\\capture.jpg");
+                File outfile = new File(System.getProperty("user.home") + "/Desktop/capture.jpg");
                 try {
                     outfile.createNewFile();
                     ImageIO.write(img, "jpg", outfile);

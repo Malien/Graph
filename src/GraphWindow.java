@@ -3,8 +3,12 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static org.lwjgl.glfw.GLFW.*;
@@ -66,22 +70,53 @@ public class GraphWindow {
         imageCallback = callback;
     }
 
-    private BufferedImage getImage(){
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
+//    private BufferedImage getImage(){
+//        try (MemoryStack stack = MemoryStack.stackPush()) {
+//            IntBuffer pWidth = stack.mallocInt(1);
+//            IntBuffer pHeight = stack.mallocInt(1);
+//
+//            glfwGetWindowSize(window, pWidth, pHeight);
+//
+//            int width = pWidth.get(0);
+//            int height = pHeight.get(0);
+//
+//            ByteBuffer pixels = ByteBuffer.allocateDirect(width*height*4);
+//            pixels.order(ByteOrder.nativeOrder());
+//
+//            ByteBuffer buffer = ByteBuffer.allocateDirect(width*height*4);
+//            buffer.order(ByteOrder.nativeOrder());
+//
+//            glReadPixels(0,0, width, height, GL_UNSIGNED_BYTE, GL_RGBA, buffer);
+//
+//            buffer.flip();
+//
+//            byte[] data = new byte[width*height*4];
+//            int counter = 0;
+//            while (pixels.hasRemaining()){
+//                data[counter++] = pixels.get();
+//            }
+//            System.out.println(Arrays.toString(data));
+//            System.out.println(counter);
+//
+//            BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
+////            img.setRGB(0, 0, width, height, buffer, 0, width);
+//            return img;
+//        }
+//    }
 
-            glfwGetWindowSize(window, pWidth, pHeight);
+    private BufferedImage getImage() {
+        int[] height = new int[1];
+        int[] width = new int[1];
+        int[] xpos = new int[1];
+        int[] ypos = new int[1];
 
-            int width = pWidth.get(0);
-            int height = pHeight.get(0);
-
-            int[] buffer = new int[width*height];
-            glReadPixels(0,0, width, height, GL_INT, GL_RGB, buffer);
-
-            BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
-            img.setRGB(0, 0, width, height, buffer, 0, width);
-            return img;
+        glfwGetWindowSize(window, width, height);
+        glfwGetWindowPos(window, xpos, ypos);
+        try {
+            return new Robot().createScreenCapture(new Rectangle(xpos[0], ypos[0], width[0], height[0]));
+        } catch (AWTException ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 
